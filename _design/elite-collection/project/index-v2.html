@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Elite — Arabic Leather Atelier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,300;0,6..96,400;0,6..96,500;1,6..96,300;1,6..96,400&family=Syne:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+    integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+    integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+    integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+    crossorigin="anonymous"></script>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ink: #1a1208;
+      --ink2: #f2ede4;
+      --ink3: #ede7db;
+      --ink4: #e6ddd0;
+      --gold: #b8872a;
+      --gold2: #d4a850;
+      --gold3: rgba(184, 135, 42, 0.10);
+      --bone: #faf8f4;
+      --bone2: #5a4a30;
+      --stone: #8a7a60;
+      --border: rgba(0, 0, 0, 0.10);
+      --border2: rgba(0, 0, 0, 0.06);
+      --ff-disp: 'Bodoni Moda', Georgia, serif;
+      --ff-ui: 'Syne', system-ui, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #faf8f4;
+      color: var(--ink);
+      font-family: var(--ff-ui);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* ── Custom cursor ── */
+    #cursor {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background 0.2s;
+      mix-blend-mode: normal;
+    }
+
+    #cursor-ring {
+      position: fixed;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(200, 146, 74, 0.5);
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: all 0.12s ease;
+    }
+
+    body:has(a:hover) #cursor,
+    body:has(button:hover) #cursor {
+      width: 14px;
+      height: 14px;
+      background: var(--gold2);
+    }
+
+    body:has(a:hover) #cursor-ring,
+    body:has(button:hover) #cursor-ring {
+      width: 56px;
+      height: 56px;
+      border-color: rgba(200, 146, 74, 0.3);
+    }
+
+    ::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #faf8f4;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--gold);
+    }
+
+    /* ── Typography ── */
+    .disp {
+      font-family: var(--ff-disp);
+    }
+
+    /* ── Noise grain ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+
+    /* ── Ticker ── */
+    @keyframes tickerScroll {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    .ticker-inner {
+      display: inline-flex;
+      white-space: nowrap;
+      animation: tickerScroll 30s linear infinite;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(32px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideRight {
+      from {
+        transform: translateX(100%);
+      }
+
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes wipeIn {
+      from {
+        clip-path: inset(0 100% 0 0);
+      }
+
+      to {
+        clip-path: inset(0 0% 0 0);
+      }
+    }
+
+    @keyframes lineGrow {
+      from {
+        transform: scaleX(0);
+        transform-origin: left;
+      }
+
+      to {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+    }
+
+    @keyframes numberFloat {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    .anim-fade-up {
+      animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .anim-fade-in {
+      animation: fadeIn 0.6s ease both;
+    }
+
+    .anim-wipe {
+      animation: wipeIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    /* ── Buttons ── */
+    .btn-elite {
+      position: relative;
+      overflow: hidden;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: var(--ff-ui);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      cursor: none;
+      transition: color 0.4s ease;
+    }
+
+    .btn-elite::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .btn-elite:hover {
+      color: var(--ink);
+    }
+
+    .btn-elite:hover::before {
+      transform: scaleX(1);
+    }
+
+    .btn-elite span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-solid {
+      background: var(--gold);
+      border: 1px solid var(--gold);
+      color: var(--ink);
+      font-family: var(--ff-ui);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      cursor: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-solid:hover {
+      background: var(--gold2);
+      border-color: var(--gold2);
+    }
+
+    /* ── Horizontal rule ── */
+    .hr {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+
+    /* ── Big number ── */
+    .big-num {
+      font-family: var(--ff-disp);
+      font-size: clamp(80px, 14vw, 180px);
+      font-weight: 300;
+      color: rgba(200, 146, 74, 0.06);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* ── Vertical label ── */
+    .vert-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      font-family: var(--ff-ui);
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    /* ── Cart drawer ── */
+    .cart-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 5, 4, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .cart-drawer {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: min(420px, 100vw);
+      background: rgba(250, 248, 244, 0.98);
+      border-left: 1px solid var(--border);
+      animation: slideRight 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Accordion ── */
+    .acc-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .acc-body.open {
+      max-height: 400px;
+    }
+
+    /* ── Size btn ── */
+    .sz-btn {
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--bone2);
+      font-family: var(--ff-ui);
+      font-size: 12px;
+      cursor: none;
+      transition: all 0.25s;
+    }
+
+    .sz-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .sz-btn.sel {
+      border-color: var(--gold);
+      background: var(--gold3);
+      color: var(--gold);
+    }
+
+    /* ── Float input ── */
+    .fi-wrap {
+      position: relative;
+    }
+
+    .fi {
+      width: 100%;
+      background: var(--ink3);
+      border: 1px solid var(--border);
+      color: var(--bone);
+      font-family: var(--ff-ui);
+      font-size: 13px;
+      font-weight: 300;
+      padding: 20px 16px 8px;
+      outline: none;
+      transition: border-color 0.3s;
+      -webkit-appearance: none;
+    }
+
+    .fi:focus {
+      border-color: var(--gold);
+    }
+
+    .fl {
+      position: absolute;
+      left: 16px;
+      top: 14px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--stone);
+      pointer-events: none;
+      transition: all 0.25s;
+    }
+
+    .fi:focus~.fl,
+    .fi:not(:placeholder-shown)~.fl {
+      top: 5px;
+      font-size: 8px;
+      color: var(--gold);
+    }
+
+    /* ── Gallery dot ── */
+    .gdot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--stone);
+      cursor: none;
+      transition: all 0.3s;
+    }
+
+    .gdot.on {
+      background: var(--gold);
+      width: 18px;
+      border-radius: 2px;
+    }
+
+    /* ── Product row (collection) ── */
+    .prod-row {
+      border-top: 1px solid var(--border2);
+      transition: border-color 0.3s;
+    }
+
+    .prod-row:hover {
+      border-top-color: var(--border);
+    }
+
+    .prod-img-wrap {
+      overflow: hidden;
+    }
+
+    .prod-img-wrap img {
+      transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .prod-row:hover .prod-img-wrap img {
+      transform: scale(1.08);
+    }
+
+    /* ── Step indicator ── */
+    .step-dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      border: 1px solid var(--border);
+      color: var(--stone);
+      transition: all 0.3s;
+    }
+
+    .step-dot.act {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold3);
+    }
+
+    .step-dot.done {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--ink);
+    }
+
+    /* ── Mobile nav ── */
+    .mob-nav {
+      position: fixed;
+      inset: 0;
+      background: #faf8f4;
+      z-index: 180;
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* ── Marquee on story ── */
+    @keyframes marq {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    .marq-inner {
+      animation: marq 20s linear infinite;
+    }
+
+    /* ── Checkbox/tag ── */
+    .etag {
+      display: inline-block;
+      padding: 3px 10px;
+      border: 1px solid var(--border);
+      font-family: var(--ff-ui);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ── Filter pill ── */
+    .fpill {
+      padding: 8px 18px;
+      border: 1px solid var(--border2);
+      background: transparent;
+      color: var(--stone);
+      font-family: var(--ff-ui);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: all 0.25s;
+      white-space: nowrap;
+    }
+
+    .fpill:hover {
+      border-color: var(--border);
+      color: var(--bone2);
+    }
+
+    .fpill.on {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold3);
+    }
+
+    @media (max-width: 767px) {
+      body {
+        cursor: auto;
+      }
+
+      #cursor,
+      #cursor-ring {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <div id="root"></div>
+
+  <script>
+    // Cursor follow
+    const cur = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx + 'px'; cur.style.top = my + 'px'; });
+    function animRing() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animRing);
+    }
+    animRing();
+  </script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo } = React;
+
+    /* ══════════════════════════════════════════
+       DATA
+    ══════════════════════════════════════════ */
+    const PRODUCTS = [
+      { id: 1, name: 'Al-Mahmal Oxford', price: 2800, tag: 'Signature', leather: 'Camel Nappa', style: 'Oxford', sizes: [40, 41, 42, 43, 44, 45], image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=85&auto=format&fit=crop', num: '001' },
+      { id: 2, name: 'Najd Derby', price: 2200, tag: 'New', leather: 'Goat Suede', style: 'Derby', sizes: [39, 40, 41, 42, 43, 44], image: 'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=800&q=85&auto=format&fit=crop', num: '002' },
+      { id: 3, name: 'Hijaz Loafer', price: 1950, tag: 'Bestseller', leather: 'Calf Leather', style: 'Loafer', sizes: [40, 41, 42, 43, 44], image: 'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=800&q=85&auto=format&fit=crop', num: '003' },
+      { id: 4, name: 'Rub Al Khali Boot', price: 3400, tag: 'Limited', leather: 'Camel Full-Grain', style: 'Boot', sizes: [41, 42, 43, 44, 45], image: 'https://images.unsplash.com/photo-1542291026-7b4d3fef59c8?w=800&q=85&auto=format&fit=crop', num: '004' },
+      { id: 5, name: 'Medina Mule', price: 1600, tag: '', leather: 'Goat Suede', style: 'Loafer', sizes: [39, 40, 41, 42, 43], image: 'https://images.unsplash.com/photo-1560343776-97e7d202ff0e?w=800&q=85&auto=format&fit=crop', num: '005' },
+      { id: 6, name: 'Quraish Chelsea', price: 2650, tag: 'New', leather: 'Calf Leather', style: 'Boot', sizes: [40, 41, 42, 43, 44, 45], image: 'https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=800&q=85&auto=format&fit=crop', num: '006' },
+    ];
+
+    const GALLERY = [
+      'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=900&q=85&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=900&q=85&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=900&q=85&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1542291026-7b4d3fef59c8?w=900&q=85&auto=format&fit=crop',
+    ];
+
+    /* ══════════════════════════════════════════
+       NAV
+    ══════════════════════════════════════════ */
+    function Nav({ page, setPage, cartCount, onCart }) {
+      const [scrolled, setScrolled] = useState(false);
+      const [mob, setMob] = useState(false);
+      useEffect(() => {
+        const h = () => setScrolled(window.scrollY > 30);
+        window.addEventListener('scroll', h);
+        return () => window.removeEventListener('scroll', h);
+      }, []);
+      const go = id => { setPage(id); setMob(false); window.scrollTo(0, 0); };
+      const links = [['collection', 'Collection'], ['story', 'Our Story'], ['contact', 'Contact']];
+
+      return (
+        <>
+          <nav style={{
+            position: 'fixed', top: 0, left: 0, right: 0, zIndex: 150,
+            padding: '18px 32px',
+            background: scrolled ? 'rgba(6,5,4,0.92)' : 'transparent',
+            backdropFilter: scrolled ? 'blur(20px)' : 'none',
+            borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
+            transition: 'all 0.4s ease',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          }}>
+            {/* Logo */}
+            <button onClick={() => go('home')} style={{ background: 'none', border: 'none', cursor: 'none', padding: 0, textAlign: 'left' }}>
+              <div style={{ fontFamily: 'var(--ff-disp)', fontSize: 20, letterSpacing: '0.12em', color: 'var(--bone)', fontWeight: 300 }}>
+                ELITE
+              </div>
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 7, letterSpacing: '0.4em', color: 'var(--stone)', textTransform: 'uppercase', marginTop: 1 }}>
+                Arabic Leather Atelier
+              </div>
+            </button>
+
+            {/* Desktop links */}
+            <div style={{ display: 'flex', gap: 40 }} className="dnav">
+              {links.map(([id, label]) => (
+                <button key={id} onClick={() => go(id)} style={{
+                  background: 'none', border: 'none', cursor: 'none',
+                  fontFamily: 'var(--ff-ui)', fontSize: 10, letterSpacing: '0.18em',
+                  textTransform: 'uppercase', fontWeight: page === id ? 500 : 300,
+                  color: page === id ? 'var(--gold)' : 'var(--bone2)',
+                  transition: 'color 0.25s', position: 'relative', padding: '4px 0',
+                }}>
+                  {label}
+                  {page === id && <span style={{ position: 'absolute', bottom: -3, left: 0, right: 0, height: '1px', background: 'var(--gold)', animation: 'lineGrow 0.4s ease' }} />}
+                </button>
+              ))}
+            </div>
+
+            {/* Right */}
+            <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+              <button onClick={onCart} style={{ background: 'none', border: 'none', cursor: 'none', position: 'relative', padding: 4 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--bone)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <path d="M16 10a4 4 0 01-8 0" />
+                </svg>
+                {cartCount > 0 && (
+                  <span style={{ position: 'absolute', top: -2, right: -2, width: 15, height: 15, borderRadius: '50%', background: 'var(--gold)', color: 'var(--ink)', fontSize: 8, fontFamily: 'var(--ff-ui)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartCount}</span>
+                )}
+              </button>
+              <button onClick={() => setMob(true)} className="ham" style={{ background: 'none', border: 'none', cursor: 'none', padding: 4, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                <span style={{ display: 'block', width: 22, height: 1, background: 'var(--bone)' }} />
+                <span style={{ display: 'block', width: 14, height: 1, background: 'var(--gold)' }} />
+              </button>
+            </div>
+          </nav>
+
+          {mob && (
+            <div className="mob-nav" style={{ display: 'flex', flexDirection: 'column', padding: '80px 40px 40px', position: 'fixed' }}>
+              <button onClick={() => setMob(false)} style={{ position: 'absolute', top: 24, right: 28, background: 'none', border: 'none', cursor: 'none', color: 'var(--stone)', fontSize: 22 }}>✕</button>
+              <div className="vert-label" style={{ position: 'absolute', left: 24, top: '50%', transform: 'rotate(180deg) translateY(50%)' }}>Menu</div>
+              {[['home', 'Atelier'], ...links].map(([id, label], i) => (
+                <button key={id} onClick={() => go(id)} className="anim-fade-up" style={{
+                  background: 'none', border: 'none', cursor: 'none', textAlign: 'left',
+                  fontFamily: 'var(--ff-disp)', fontSize: 'clamp(40px, 9vw, 72px)',
+                  fontWeight: 300, color: page === id ? 'var(--gold)' : 'var(--bone)',
+                  padding: '6px 0', animationDelay: `${i * 0.07}s`, transition: 'color 0.25s',
+                }}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+          <style>{`
+            @media (min-width: 768px) { .ham { display: none !important; } }
+            @media (max-width: 767px) { .dnav { display: none !important; } }
+          `}</style>
+        </>
+      );
+    }
+
+    /* ══════════════════════════════════════════
+       TICKER
+    ══════════════════════════════════════════ */
+    function Ticker() {
+      const items = ['Doha Atelier · Est. 1962', 'Full-Grain Camel Leather', '400 Pairs Per Year', '48 Hours Per Pair', 'Royal Appointment', 'Numbered Certificate Included', 'Complimentary Express Delivery', 'Master Craftsmen · 12 Specialists'];
+      const str = items.join('  ·  ');
+      return (
+        <div style={{ overflow: 'hidden', borderBottom: '1px solid var(--border2)', background: '#f2ede4', padding: '8px 0' }}>
+          <div className="ticker-inner" style={{ display: 'inline-flex' }}>
+            {[...Array(4)].map((_, i) => (
+              <span key={i} style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--stone)', paddingRight: 60, whiteSpace: 'nowrap' }}>
+                {str}
+              </span>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ══════════════════════════════════════════
+       HOME
+    ══════════════════════════════════════════ */
+    function HomePage({ setPage, setProduct }) {
+      const [loaded, setLoaded] = useState(false);
+      useEffect(() => { setTimeout(() => setLoaded(true), 100); }, []);
+
+      return (
+        <div>
+          {/* ── HERO ── */}
+          <section style={{ minHeight: '100vh', position: 'relative', background: 'linear-gradient(160deg,#faf8f4 0%,#f0ead8 60%,#faf8f4 100%)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+
+            {/* Background number */}
+            <div className="big-num" style={{
+              position: 'absolute', right: '-2vw', bottom: '-2vh',
+              fontSize: 'clamp(120px, 28vw, 380px)',
+              color: 'rgba(200,146,74,0.04)',
+              animation: 'numberFloat 8s ease-in-out infinite',
+            }}>001</div>
+
+            {/* Diagonal gold line */}
+            <div style={{
+              position: 'absolute', top: 0, left: '42%', width: '1px', height: '100%',
+              background: 'linear-gradient(to bottom, transparent, var(--border), transparent)',
+              transform: 'rotate(8deg)',
+              transformOrigin: 'top',
+              pointerEvents: 'none',
+            }} />
+
+            {/* Vertical label left */}
+            <div style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', zIndex: 2 }}>
+              <span className="vert-label">Since 1962</span>
+            </div>
+
+            {/* Content */}
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', padding: '100px 60px 60px', maxWidth: 1400, margin: '0 auto', width: '100%', gap: 40 }} className="hero-inner">
+
+              {/* Left: Text */}
+              <div style={{ flex: '0 0 auto', width: 'min(560px, 100%)', zIndex: 2 }}>
+                <div className="anim-fade-up" style={{ animationDelay: '0.1s', marginBottom: 24 }}>
+                  <span className="etag">Collection 2026</span>
+                </div>
+
+                <h1 className="disp anim-fade-up" style={{
+                  animationDelay: '0.2s',
+                  fontSize: 'clamp(52px, 8vw, 108px)',
+                  fontWeight: 300, lineHeight: 0.9, letterSpacing: '-0.01em',
+                  color: 'var(--bone)', marginBottom: 4,
+                }}>
+                  Where<br />
+                  <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Heritage</em><br />
+                  Meets<br />
+                  Sole.
+                </h1>
+
+                <div className="hr anim-fade-in" style={{ width: 120, marginTop: 32, marginBottom: 32, animationDelay: '0.5s', background: 'var(--gold)', height: 1, opacity: 0.4 }} />
+
+                <p className="anim-fade-up" style={{
+                  animationDelay: '0.55s',
+                  fontFamily: 'var(--ff-ui)', fontSize: 13, lineHeight: 1.9, fontWeight: 300,
+                  color: 'var(--stone)', maxWidth: 340, marginBottom: 36,
+                }}>
+                  Each pair requires 48 hours of unbroken attention from a single master. Limited to 400 pairs per year. Your shoes are signed by their maker.
+                </p>
+
+                <div className="anim-fade-up" style={{ animationDelay: '0.65s', display: 'flex', gap: 12 }}>
+                  <button className="btn-elite" onClick={() => { setPage('collection'); window.scrollTo(0, 0); }}>
+                    <span>Explore Collection</span>
+                  </button>
+                  <button className="btn-elite" onClick={() => { setPage('story'); window.scrollTo(0, 0); }} style={{ borderColor: 'var(--border)', color: 'var(--bone2)' }}>
+                    <span>Our Story</span>
+                  </button>
+                </div>
+
+                {/* Stats row */}
+                <div className="anim-fade-up" style={{ animationDelay: '0.75s', display: 'flex', gap: 36, marginTop: 56, paddingTop: 28, borderTop: '1px solid var(--border2)' }}>
+                  {[['60+', 'Years'], ['12', 'Masters'], ['400', 'Pairs/yr'], ['48h', 'Per Pair']].map(([n, l]) => (
+                    <div key={l}>
+                      <div className="disp" style={{ fontSize: 28, color: 'var(--gold)', fontWeight: 300, lineHeight: 1 }}>{n}</div>
+                      <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--stone)', marginTop: 3 }}>{l}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right: 3D model */}
+              <div className="anim-fade-in hero-3d-wrap" style={{ animationDelay: '0.4s', flex: 1, position: 'relative', minHeight: 480 }}>
+                {/* Corner frame */}
+                {[{ top: 0, left: 0, borderTop: '1px solid var(--gold)', borderLeft: '1px solid var(--gold)' },
+                { top: 0, right: 0, borderTop: '1px solid var(--gold)', borderRight: '1px solid var(--gold)' },
+                { bottom: 0, left: 0, borderBottom: '1px solid var(--gold)', borderLeft: '1px solid var(--gold)' },
+                { bottom: 0, right: 0, borderBottom: '1px solid var(--gold)', borderRight: '1px solid var(--gold)' },
+                ].map((s, i) => (
+                  <div key={i} style={{ position: 'absolute', width: 24, height: 24, pointerEvents: 'none', zIndex: 3, ...s }} />
+                ))}
+                {/* Sketchfab 3D embed */}
+                <iframe
+                  title="Yellow Leather Loafers"
+                  frameBorder="0"
+                  allowFullScreen
+                  allow="autoplay; fullscreen; xr-spatial-tracking"
+                  src="https://sketchfab.com/models/ef49f910c0734c51964da2da1b8db718/embed?autospin=1&autostart=1&ui_theme=dark&ui_infos=0&ui_controls=1&ui_watermark=0&dnt=1&transparent=1"
+                  style={{ width: '100%', height: '480px', display: 'block', background: 'transparent', border: 'none' }}
+                />
+                {/* Glow */}
+                <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '60%', height: 60, background: 'radial-gradient(ellipse, rgba(200,146,74,0.2), transparent)', filter: 'blur(20px)', pointerEvents: 'none' }} />
+                <div style={{ textAlign: 'center', marginTop: 10, fontFamily: 'var(--ff-ui)', fontSize: 8, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--stone)' }}>
+                  Drag · Rotate · Explore
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── TICKER ── */}
+          <Ticker />
+
+          {/* ── FEATURED — editorial list ── */}
+          <section style={{ padding: '80px 0 0', maxWidth: 1400, margin: '0 auto' }}>
+            <div style={{ padding: '0 60px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+              <div>
+                <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.3em', color: 'var(--gold)', textTransform: 'uppercase', marginBottom: 10 }}>Icons of Craft</div>
+                <h2 className="disp" style={{ fontSize: 'clamp(32px,5vw,56px)', fontWeight: 300, color: 'var(--bone)', lineHeight: 1 }}>Featured Pieces</h2>
+              </div>
+              <button className="btn-elite" onClick={() => { setPage('collection'); window.scrollTo(0, 0); }} style={{ display: 'none' }} className="see-all-btn">
+                <span>View All</span>
+              </button>
+            </div>
+            {PRODUCTS.slice(0, 3).map((p, i) => (
+              <FeaturedRow key={p.id} p={p} i={i} onClick={() => { setProduct(p); setPage('product'); window.scrollTo(0, 0); }} />
+            ))}
+            <div style={{ padding: '40px 60px' }}>
+              <button className="btn-elite" onClick={() => { setPage('collection'); window.scrollTo(0, 0); }}>
+                <span>View Full Collection</span>
+              </button>
+            </div>
+          </section>
+
+          {/* ── CRAFT STATEMENT ── */}
+          <section style={{ padding: '80px 60px', background: '#f2ede4', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', position: 'relative', overflow: 'hidden' }}>
+            <div className="big-num" style={{ position: 'absolute', right: 40, top: '50%', transform: 'translateY(-50%)', fontSize: 'clamp(80px, 16vw, 220px)' }}>1962</div>
+            <div style={{ maxWidth: 700, position: 'relative', zIndex: 1 }}>
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.3em', color: 'var(--gold)', textTransform: 'uppercase', marginBottom: 20 }}>The Atelier Promise</div>
+              <p className="disp" style={{ fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 300, fontStyle: 'italic', color: 'var(--bone)', lineHeight: 1.35, marginBottom: 24 }}>
+                "A shoe is not a product. It is the autobiography of a craftsman."
+              </p>
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, letterSpacing: '0.18em', color: 'var(--stone)', textTransform: 'uppercase' }}>
+                — Khalid Al-Rashidi, Founder · 1962
+              </div>
+            </div>
+          </section>
+
+          <style>{`
+            @media (min-width: 900px) { .see-all-btn { display: flex !important; } .hero-inner { flex-direction: row !important; } }
+            @media (max-width: 899px) { .hero-inner { flex-direction: column !important; padding: 90px 24px 40px !important; } .hero-3d-wrap { min-height: 300px !important; width: 100% !important; } }
+          `}</style>
+        </div>
+      );
+    }
+
+    function FeaturedRow({ p, i, onClick }) {
+      const [hov, setHov] = useState(false);
+      return (
+        <div className="prod-row" onClick={onClick}
+          onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+          style={{ display: 'grid', gridTemplateColumns: '80px 1fr auto', alignItems: 'center', padding: '0 60px', cursor: 'none', transition: 'background 0.3s', background: hov ? '#f2ede4' : 'transparent' }}
+          className="prod-row feat-row"
+        >
+          {/* Number */}
+          <div className="disp" style={{ fontSize: 11, color: 'var(--stone)', letterSpacing: '0.1em' }}>{p.num}</div>
+
+          {/* Name + info */}
+          <div style={{ padding: '24px 0', display: 'flex', alignItems: 'center', gap: 24, overflow: 'hidden' }}>
+            {/* Thumb — slides in on hover */}
+            <div style={{ width: 80, height: 80, overflow: 'hidden', flexShrink: 0, opacity: hov ? 1 : 0, transform: hov ? 'translateX(0)' : 'translateX(-12px)', transition: 'all 0.4s cubic-bezier(0.22,1,0.36,1)' }}>
+              <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+            <div>
+              <div className="disp" style={{ fontSize: 'clamp(22px,3.5vw,40px)', fontWeight: 300, color: hov ? 'var(--bone)' : 'var(--bone2)', transition: 'color 0.3s', lineHeight: 1 }}>
+                {p.name}
+              </div>
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, letterSpacing: '0.12em', color: 'var(--stone)', textTransform: 'uppercase', marginTop: 4 }}>
+                {p.leather} · {p.style}
+              </div>
+            </div>
+          </div>
+
+          {/* Price + arrow */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+            {p.tag && <span className="etag">{p.tag}</span>}
+            <div className="disp" style={{ fontSize: 18, color: 'var(--gold)', fontWeight: 300 }}>SAR {p.price.toLocaleString()}</div>
+            <div style={{ width: 28, height: 28, border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: hov ? 'var(--gold)' : 'var(--stone)', transition: 'all 0.3s', transform: hov ? 'translateX(4px)' : 'translateX(0)' }}>›</div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ══════════════════════════════════════════
+       COLLECTION
+    ══════════════════════════════════════════ */
+    function CollectionPage({ setPage, setProduct }) {
+      const [sf, setSf] = useState('All');
+      const [lf, setLf] = useState('All');
+      const filtered = useMemo(() => {
+        let l = PRODUCTS;
+        if (sf !== 'All') l = l.filter(p => p.style === sf);
+        if (lf !== 'All') l = l.filter(p => p.leather === lf);
+        return l;
+      }, [sf, lf]);
+
+      return (
+        <div style={{ paddingTop: 70, minHeight: '100vh' }}>
+          {/* Header */}
+          <div style={{ padding: '48px 60px 0', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+            <div>
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.3em', color: 'var(--gold)', textTransform: 'uppercase', marginBottom: 10 }}>The Collection</div>
+              <h1 className="disp" style={{ fontSize: 'clamp(40px,7vw,80px)', fontWeight: 300, color: 'var(--bone)', lineHeight: 1 }}>
+                All Pieces
+              </h1>
+            </div>
+            <div className="big-num" style={{ fontSize: 'clamp(60px,10vw,120px)' }}>
+              {String(filtered.length).padStart(2, '0')}
+            </div>
+          </div>
+
+          {/* Filter bar */}
+          <div style={{ position: 'sticky', top: 60, zIndex: 20, background: 'rgba(6,5,4,0.94)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border2)', padding: '12px 60px' }}>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center', overflowX: 'auto', paddingBottom: 2 }}>
+              {['All', 'Oxford', 'Derby', 'Loafer', 'Boot'].map(f => (
+                <button key={f} className={'fpill' + (sf === f ? ' on' : '')} onClick={() => setSf(f)}>{f}</button>
+              ))}
+              <div style={{ width: 1, height: 16, background: 'var(--border)', flexShrink: 0, margin: '0 8px' }} />
+              {['All', 'Camel Nappa', 'Camel Full-Grain', 'Goat Suede', 'Calf Leather'].map(f => (
+                <button key={f} className={'fpill' + (lf === f ? ' on' : '')} onClick={() => setLf(f)} style={{ fontSize: 9 }}>{f}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Product list */}
+          <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 0 80px' }}>
+            {filtered.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '80px', fontFamily: 'var(--ff-disp)', fontSize: 32, color: 'var(--stone)', fontStyle: 'italic' }}>No pieces match</div>
+            ) : filtered.map((p, i) => (
+              <CollectionRow key={p.id} p={p} i={i} onClick={() => { setProduct(p); setPage('product'); window.scrollTo(0, 0); }} />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function CollectionRow({ p, onClick }) {
+      const [hov, setHov] = useState(false);
+      return (
+        <div onClick={onClick} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+          style={{
+            borderTop: '1px solid var(--border2)', cursor: 'none', display: 'grid', gap: 0,
+            gridTemplateColumns: '60px 1fr 200px',
+            background: hov ? '#f2ede4' : 'transparent', transition: 'background 0.3s',
+            padding: '0 60px', alignItems: 'center',
+          }}
+        >
+          <div className="disp" style={{ fontSize: 10, color: 'var(--stone)', letterSpacing: '0.08em' }}>{p.num}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 28, padding: '20px 0' }}>
+            <div className="prod-img-wrap" style={{ width: 100, height: 70, flexShrink: 0, overflow: 'hidden', opacity: hov ? 1 : 0.7, transition: 'opacity 0.3s' }}>
+              <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transform: hov ? 'scale(1.1)' : 'scale(1)', transition: 'transform 0.7s cubic-bezier(0.22,1,0.36,1)' }} />
+            </div>
+            <div>
+              <div className="disp" style={{ fontSize: 'clamp(18px,2.5vw,32px)', fontWeight: 300, color: hov ? 'var(--bone)' : 'var(--bone2)', transition: 'color 0.3s' }}>{p.name}</div>
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--stone)', marginTop: 3 }}>{p.leather} · {p.style}</div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 16 }}>
+            {p.tag && <span className="etag" style={{ fontSize: 8 }}>{p.tag}</span>}
+            <div className="disp" style={{ fontSize: 16, color: 'var(--gold)' }}>SAR {p.price.toLocaleString()}</div>
+            <div style={{ color: hov ? 'var(--gold)' : 'var(--stone)', fontSize: 18, transition: 'all 0.3s', transform: hov ? 'translateX(4px)' : 'none' }}>›</div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ══════════════════════════════════════════
+       PRODUCT PAGE
+    ══════════════════════════════════════════ */
+    function ProductPage({ product, onAdd, setPage }) {
+      const p = product || PRODUCTS[0];
+      const [gi, setGi] = useState(0);
+      const [sz, setSz] = useState(null);
+      const [qty, setQty] = useState(1);
+      const [added, setAdded] = useState(false);
+      const [open, setOpen] = useState(null);
+      const [wish, setWish] = useState(false);
+
+      useEffect(() => {
+        const iv = setInterval(() => setGi(i => (i + 1) % GALLERY.length), 5000);
+        return () => clearInterval(iv);
+      }, []);
+
+      const handleAdd = () => {
+        if (!sz) { document.getElementById('szs')?.scrollIntoView({ block: 'center' }); return; }
+        onAdd({ ...p, size: sz, qty, leather: p.leather });
+        setAdded(true); setTimeout(() => setAdded(false), 2000);
+      };
+
+      const accs = [
+        { id: 'mat', t: 'Material & Care', b: `Crafted from hand-selected ${p.leather} sourced exclusively from artisan tanneries in Doha. Treat monthly with our complimentary leather balm. Store in included cedar shoe trees. Clean with a soft, barely damp cloth.` },
+        { id: 'ship', t: 'Delivery & Packaging', b: 'Complimentary express delivery within Qatar (1–2 business days). GCC delivery 3–5 days. Each pair is presented in a hand-stamped atelier box with silk tissue and a numbered certificate of authenticity signed by your craftsman.' },
+        { id: 'sz', t: 'Sizing & Fit', b: 'Sized in EU measurements, true to size. Between sizes, size up. Bespoke last modifications available at no charge for returning clients. A complimentary sizing kit can be sent to your address on request.' },
+      ];
+
+      return (
+        <div style={{ paddingTop: 70, minHeight: '100vh' }}>
+          {/* Breadcrumb */}
+          <div style={{ padding: '16px 60px', display: 'flex', gap: 10, alignItems: 'center' }}>
+            <button onClick={() => setPage('collection')} style={{ background: 'none', border: 'none', cursor: 'none', fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--stone)' }}>Collection</button>
+            <span style={{ color: 'var(--stone)', fontSize: 10 }}>›</span>
+            <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)' }}>{p.name}</span>
+          </div>
+
+          <div style={{ display: 'grid', maxWidth: 1400, margin: '0 auto', padding: '0 0 80px' }} className="pdp-grid">
+            {/* Gallery */}
+            <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative', paddingBottom: '92%', overflow: 'hidden', background: '#f2ede4' }}>
+                {GALLERY.map((src, i) => (
+                  <img key={src} src={src} alt={p.name} style={{
+                    position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+                    opacity: gi === i ? 1 : 0, transition: 'opacity 1.2s ease',
+                    transform: gi === i ? 'scale(1)' : 'scale(1.04)',
+                    transitionProperty: 'opacity,transform', transitionDuration: '1.2s',
+                  }} />
+                ))}
+                {/* Overlay gradient */}
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(6,5,4,0.5) 0%, transparent 50%)', pointerEvents: 'none' }} />
+                {/* Num */}
+                <div className="big-num" style={{ position: 'absolute', bottom: 16, right: 20, fontSize: 80, opacity: 0.12 }}>{p.num}</div>
+                {/* Tag */}
+                {p.tag && <div style={{ position: 'absolute', top: 20, left: 20 }}><span className="etag">{p.tag}</span></div>}
+                {/* Wish */}
+                <button onClick={() => setWish(w => !w)} style={{ position: 'absolute', top: 20, right: 20, width: 38, height: 38, background: 'rgba(6,5,4,0.7)', backdropFilter: 'blur(8px)', border: `1px solid ${wish ? 'var(--gold)' : 'var(--border)'}`, cursor: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: wish ? 'var(--gold)' : 'var(--stone)', fontSize: 15, transition: 'all 0.3s' }}>
+                  {wish ? '♥' : '♡'}
+                </button>
+                {/* Arrows */}
+                {[['‹', -1], ['›', 1]].map(([a, d]) => (
+                  <button key={d} onClick={() => setGi(i => (i + d + GALLERY.length) % GALLERY.length)} style={{
+                    position: 'absolute', top: '50%', transform: 'translateY(-50%)',
+                    [d === -1 ? 'left' : 'right']: 16, width: 36, height: 36,
+                    background: 'rgba(6,5,4,0.6)', backdropFilter: 'blur(8px)',
+                    border: '1px solid var(--border)', cursor: 'none',
+                    color: 'var(--bone)', fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'border-color 0.25s',
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--gold)'}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                  >{a}</button>
+                ))}
+              </div>
+              {/* Thumbs */}
+              <div style={{ display: 'flex', gap: 2, marginTop: 2 }}>
+                {GALLERY.map((src, i) => (
+                  <button key={src} onClick={() => setGi(i)} style={{ flex: 1, paddingBottom: '18%', position: 'relative', overflow: 'hidden', border: `1px solid ${gi === i ? 'var(--gold)' : 'transparent'}`, cursor: 'none', background: '#f2ede4', transition: 'border-color 0.3s' }}>
+                    <img src={src} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: gi === i ? 0.9 : 0.45, transition: 'opacity 0.3s' }} />
+                  </button>
+                ))}
+              </div>
+              {/* Dots */}
+              <div style={{ display: 'flex', gap: 6, justifyContent: 'center', padding: '14px 0' }}>
+                {GALLERY.map((_, i) => <button key={i} onClick={() => setGi(i)} className={'gdot' + (gi === i ? ' on' : '')} style={{ border: 'none', cursor: 'none', padding: 0 }} />)}
+              </div>
+            </div>
+
+            {/* Details */}
+            <div style={{ padding: '24px 48px 40px' }}>
+              {/* Stars */}
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 20 }}>
+                <div>{'★★★★★'.split('').map((s, i) => <span key={i} style={{ color: 'var(--gold)', fontSize: 11 }}>{s}</span>)}</div>
+                <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, color: 'var(--stone)' }}>48 reviews</span>
+              </div>
+
+              <h1 className="disp" style={{ fontSize: 'clamp(32px,5vw,58px)', fontWeight: 300, color: 'var(--bone)', lineHeight: 1.0, marginBottom: 10 }}>{p.name}</h1>
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, letterSpacing: '0.12em', color: 'var(--stone)', textTransform: 'uppercase', marginBottom: 24 }}>{p.leather} · Handcrafted in Doha</div>
+
+              {/* Price */}
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 24 }}>
+                <span className="disp" style={{ fontSize: 36, color: 'var(--gold)', fontWeight: 300 }}>SAR {p.price.toLocaleString()}</span>
+                <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.1em', color: 'var(--stone)', textTransform: 'uppercase' }}>Duties included</span>
+              </div>
+
+              <div className="hr" style={{ marginBottom: 24 }} />
+
+              <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 12, lineHeight: 1.9, color: 'var(--bone2)', marginBottom: 28 }}>
+                A statement of understated authority. The {p.name} is individually shaped on a hand-carved wooden last, requiring 48 hours of continuous attention from a single master artisan. Limited to 40 pairs per season.
+              </p>
+
+              {/* Attributes grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 28 }}>
+                {[['Leather', p.leather], ['Style', p.style], ['Origin', 'Doha, Qatar'], ['Edition', 'Numbered']].map(([k, v]) => (
+                  <div key={k} style={{ borderLeft: '1px solid var(--border)', paddingLeft: 12 }}>
+                    <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 8, letterSpacing: '0.18em', color: 'var(--stone)', textTransform: 'uppercase', marginBottom: 3 }}>{k}</div>
+                    <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 12, color: 'var(--bone)' }}>{v}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="hr" style={{ marginBottom: 24 }} />
+
+              {/* Size */}
+              <div id="szs" style={{ marginBottom: 28 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--bone2)' }}>Select Size (EU)</span>
+                  <button style={{ background: 'none', border: 'none', cursor: 'none', fontFamily: 'var(--ff-ui)', fontSize: 9, color: 'var(--gold)', letterSpacing: '0.06em', textDecoration: 'underline' }}>Size Guide</button>
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {p.sizes.map(s => (
+                    <button key={s} className={'sz-btn' + (sz === s ? ' sel' : '')} onClick={() => setSz(s)}>{s}</button>
+                  ))}
+                </div>
+                {!sz && <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, color: 'var(--gold)', marginTop: 8, letterSpacing: '0.06em' }}>↑ Select a size to continue</p>}
+              </div>
+
+              {/* Qty */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+                <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--bone2)' }}>Qty</span>
+                <div style={{ display: 'flex', border: '1px solid var(--border)' }}>
+                  {['-', '+'].map((op, i) => (
+                    <button key={op} onClick={() => setQty(q => op === '-' ? Math.max(1, q - 1) : q + 1)} style={{ width: 36, height: 36, background: 'none', border: 'none', color: 'var(--bone2)', cursor: 'none', fontSize: 16, borderRight: i === 0 ? '1px solid var(--border)' : 'none', transition: 'color 0.2s' }}
+                      onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--bone2)'}
+                    >{op}</button>
+                  ))}
+                  <span style={{ width: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ff-ui)', fontSize: 13, color: 'var(--bone)', borderLeft: '1px solid var(--border)' }}>{qty}</span>
+                </div>
+              </div>
+
+              {/* CTAs */}
+              <button className="btn-solid" onClick={handleAdd} style={{ width: '100%', padding: '18px', fontSize: 10, letterSpacing: '0.22em', marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                {added ? '✓ Added to Selection' : `Reserve This Pair · SAR ${(p.price * qty).toLocaleString()}`}
+              </button>
+              <button className="btn-elite" onClick={() => alert('A client advisor will contact you within 2 hours.')} style={{ width: '100%', padding: '14px', fontSize: 9 }}>
+                <span>Speak with a Client Advisor</span>
+              </button>
+
+              {/* Trust */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20, flexWrap: 'wrap', gap: 8 }}>
+                {['Free Express Delivery', 'Certificate Included', '30-Day Returns'].map(t => (
+                  <span key={t} style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.06em', color: 'var(--stone)' }}>✓ {t}</span>
+                ))}
+              </div>
+
+              <div className="hr" style={{ margin: '28px 0' }} />
+
+              {/* Accordions */}
+              {accs.map(a => (
+                <div key={a.id} style={{ borderBottom: '1px solid var(--border2)' }}>
+                  <button onClick={() => setOpen(o => o === a.id ? null : a.id)} style={{ width: '100%', background: 'none', border: 'none', cursor: 'none', padding: '16px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--bone)' }}>{a.t}</span>
+                    <span style={{ color: 'var(--gold)', fontSize: 18, transform: open === a.id ? 'rotate(45deg)' : 'none', transition: 'transform 0.3s' }}>+</span>
+                  </button>
+                  <div className={'acc-body' + (open === a.id ? ' open' : '')}>
+                    <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 12, lineHeight: 1.9, color: 'var(--bone2)', paddingBottom: 16 }}>{a.b}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <style>{`
+            .pdp-grid { grid-template-columns: 1fr; }
+            @media (min-width: 900px) { .pdp-grid { grid-template-columns: 1fr 1fr !important; align-items: start; } }
+          `}</style>
+        </div>
+      );
+    }
+
+    /* ══════════════════════════════════════════
+       CART
+    ══════════════════════════════════════════ */
+    function CartDrawer({ cart, onClose, onRemove, setPage }) {
+      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      return (
+        <div className="cart-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+          <div className="cart-drawer">
+            <div style={{ padding: '28px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div className="disp" style={{ fontSize: 22, color: 'var(--bone)', fontWeight: 300 }}>Your Selection</div>
+                <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.2em', color: 'var(--stone)', textTransform: 'uppercase', marginTop: 2 }}>{cart.length} piece{cart.length !== 1 ? 's' : ''} reserved</div>
+              </div>
+              <button onClick={onClose} style={{ width: 36, height: 36, background: 'none', border: '1px solid var(--border)', cursor: 'none', color: 'var(--stone)', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'border-color 0.25s' }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--gold)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+              >✕</button>
+            </div>
+
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              {cart.length === 0 ? (
+                <div style={{ padding: '60px 28px', textAlign: 'center' }}>
+                  <div className="disp" style={{ fontSize: 32, color: 'var(--stone)', fontStyle: 'italic' }}>Empty</div>
+                  <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 11, color: 'var(--stone)', marginTop: 8, letterSpacing: '0.06em' }}>Your curated collection awaits</p>
+                </div>
+              ) : cart.map((item, idx) => (
+                <div key={item.id + item.size} style={{ padding: '20px 28px', borderBottom: '1px solid var(--border2)', display: 'flex', gap: 14, animation: 'fadeUp 0.4s ease both', animationDelay: `${idx * 0.06}s` }}>
+                  <div style={{ width: 68, height: 68, overflow: 'hidden', flexShrink: 0, background: '#ede7db' }}>
+                    <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }} onError={e => e.currentTarget.style.display = 'none'} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div className="disp" style={{ fontSize: 16, color: 'var(--bone)', marginBottom: 2 }}>{item.name}</div>
+                    <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, color: 'var(--stone)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Size {item.size} · {item.leather}</div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span className="disp" style={{ fontSize: 16, color: 'var(--gold)' }}>SAR {(item.price * item.qty).toLocaleString()}</span>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, color: 'var(--bone2)' }}>Qty {item.qty}</span>
+                        <button onClick={() => onRemove(item.id, item.size)} style={{ background: 'none', border: 'none', cursor: 'none', fontFamily: 'var(--ff-ui)', fontSize: 9, color: 'var(--stone)', transition: 'color 0.2s' }}
+                          onMouseEnter={e => e.currentTarget.style.color = '#c0392b'}
+                          onMouseLeave={e => e.currentTarget.style.color = 'var(--stone)'}
+                        >Remove</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {cart.length > 0 && (
+              <div style={{ borderTop: '1px solid var(--border)', padding: '20px 28px 28px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--stone)' }}>Total</span>
+                  <span className="disp" style={{ fontSize: 22, color: 'var(--bone)' }}>SAR {total.toLocaleString()}</span>
+                </div>
+                <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, color: 'var(--stone)', letterSpacing: '0.06em', marginBottom: 20 }}>Duties & bespoke packaging included</div>
+                <div className="hr" style={{ marginBottom: 20 }} />
+                <button className="btn-solid" onClick={() => { onClose(); setPage('checkout'); window.scrollTo(0, 0); }} style={{ width: '100%', padding: '16px', fontSize: 10, letterSpacing: '0.22em' }}>
+                  Proceed to Checkout
+                </button>
+                <button onClick={onClose} style={{ width: '100%', marginTop: 10, padding: '12px', background: 'none', border: 'none', cursor: 'none', fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--stone)', transition: 'color 0.2s' }}
+                  onMouseEnter={e => e.currentTarget.style.color = 'var(--bone2)'}
+                  onMouseLeave={e => e.currentTarget.style.color = 'var(--stone)'}
+                >Continue Browsing</button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    /* ══════════════════════════════════════════
+       CHECKOUT
+    ══════════════════════════════════════════ */
+    function CheckoutPage({ cart, setPage }) {
+      const [step, setStep] = useState(0);
+      const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', address: '', city: '', country: 'Qatar', cardNum: '', expiry: '', cvv: '', name: '' });
+      const [placed, setPlaced] = useState(false);
+      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+      const steps = ['Details', 'Delivery', 'Payment'];
+
+      if (placed) return (
+        <div style={{ paddingTop: 80, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 24px' }}>
+          <div style={{ textAlign: 'center', maxWidth: 480 }} className="anim-fade-up">
+            <div style={{ width: 60, height: 60, border: '1px solid var(--gold)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px', fontSize: 22, color: 'var(--gold)' }}>✓</div>
+            <h2 className="disp" style={{ fontSize: 48, fontWeight: 300, color: 'var(--bone)', marginBottom: 12 }}>Order Confirmed</h2>
+            <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 12, color: 'var(--stone)', lineHeight: 1.9, marginBottom: 8 }}>Your bespoke pair is now in the hands of our master craftsmen.</p>
+            <p className="disp" style={{ fontSize: 18, color: 'var(--gold)', fontStyle: 'italic', marginBottom: 36 }}>"We'll notify you when it begins its journey."</p>
+            <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '20px 0', marginBottom: 32 }}>
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, color: 'var(--stone)', marginBottom: 4, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Order Total</div>
+              <div className="disp" style={{ fontSize: 32, color: 'var(--gold)' }}>SAR {total.toLocaleString()}</div>
+            </div>
+            <button className="btn-solid" onClick={() => { setPage('collection'); window.scrollTo(0, 0); }} style={{ padding: '16px 48px', fontSize: 10 }}>Continue Browsing</button>
+          </div>
+        </div>
+      );
+
+      return (
+        <div style={{ paddingTop: 80, minHeight: '100vh' }}>
+          <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px 80px', display: 'grid' }} className="co-grid">
+            <div>
+              {/* Brand */}
+              <div style={{ textAlign: 'center', marginBottom: 40 }}>
+                <div className="disp" style={{ fontSize: 22, color: 'var(--gold)', letterSpacing: '0.1em' }}>ELITE</div>
+                <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 8, letterSpacing: '0.3em', color: 'var(--stone)', textTransform: 'uppercase', marginTop: 2 }}>Secure Checkout</div>
+              </div>
+
+              {/* Steps */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 40 }}>
+                {steps.map((s, i) => (
+                  <React.Fragment key={s}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, cursor: i < step ? 'none' : 'default' }} onClick={() => i < step && setStep(i)}>
+                      <div className={'step-dot' + (i === step ? ' act' : i < step ? ' done' : '')}>{i < step ? '✓' : i + 1}</div>
+                      <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: i === step ? 'var(--gold)' : 'var(--stone)' }}>{s}</span>
+                    </div>
+                    {i < steps.length - 1 && <div style={{ flex: 1, height: 1, background: i < step ? 'var(--gold)' : 'var(--border)', margin: '0 12px 20px' }} />}
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Fields */}
+              {step === 0 && (
+                <div className="anim-fade-in" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  {[['First Name', 'firstName', 1], ['Last Name', 'lastName', 1], ['Email', 'email', 2, 'email'], ['Phone', 'phone', 2, 'tel']].map(([l, k, cs, t = 'text']) => (
+                    <div key={k} className="fi-wrap" style={{ gridColumn: `span ${cs}` }}>
+                      <input className="fi" type={t} value={form[k]} onChange={e => set(k, e.target.value)} placeholder=" " />
+                      <label className="fl">{l}</label>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {step === 1 && (
+                <div className="anim-fade-in" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <div className="fi-wrap" style={{ gridColumn: 'span 2' }}><input className="fi" value={form.address} onChange={e => set('address', e.target.value)} placeholder=" " /><label className="fl">Street Address</label></div>
+                  <div className="fi-wrap"><input className="fi" value={form.city} onChange={e => set('city', e.target.value)} placeholder=" " /><label className="fl">City</label></div>
+                  <div className="fi-wrap">
+                    <select className="fi" value={form.country} onChange={e => set('country', e.target.value)} style={{ paddingTop: 20, cursor: 'none' }}>
+                      {['Qatar', 'UAE', 'Kuwait', 'Qatar', 'Bahrain', 'Oman'].map(o => <option key={o}>{o}</option>)}
+                    </select>
+                    <label className="fl" style={{ top: 5, fontSize: 8, color: 'var(--gold)' }}>Country</label>
+                  </div>
+                  <div style={{ gridColumn: 'span 2', padding: '16px', background: '#ede7db', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 11, color: 'var(--bone)', marginBottom: 2 }}>Complimentary Express Delivery</div>
+                      <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, color: 'var(--stone)' }}>1–2 business days · Signature required</div>
+                    </div>
+                    <span className="disp" style={{ fontSize: 16, color: 'var(--gold)' }}>Free</span>
+                  </div>
+                </div>
+              )}
+              {step === 2 && (
+                <div className="anim-fade-in" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  {[['Cardholder Name', 'name', 2], ['Card Number', 'cardNum', 2], ['Expiry (MM/YY)', 'expiry', 1], ['CVV', 'cvv', 1]].map(([l, k, cs]) => (
+                    <div key={k} className="fi-wrap" style={{ gridColumn: `span ${cs}` }}><input className="fi" value={form[k]} onChange={e => set(k, e.target.value)} placeholder=" " type={k === 'cvv' ? 'password' : 'text'} maxLength={k === 'cardNum' ? 19 : k === 'expiry' ? 5 : k === 'cvv' ? 4 : 100} /><label className="fl">{l}</label></div>
+                  ))}
+                  <div style={{ gridColumn: 'span 2', display: 'flex', gap: 8, padding: '8px 0', alignItems: 'center' }}>
+                    <span style={{ fontSize: 10, color: 'var(--stone)' }}>🔒</span>
+                    <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, color: 'var(--stone)', letterSpacing: '0.06em' }}>256-bit SSL · PCI DSS compliant</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Nav */}
+              <div style={{ display: 'flex', gap: 10, marginTop: 28 }}>
+                {step > 0 && <button className="btn-elite" onClick={() => setStep(s => s - 1)} style={{ padding: '14px 24px', flex: 1 }}><span>Back</span></button>}
+                <button className="btn-solid" onClick={() => step < steps.length - 1 ? setStep(s => s + 1) : setPlaced(true)} style={{ padding: '16px', flex: 2, fontSize: 10, letterSpacing: '0.22em' }}>
+                  {step < steps.length - 1 ? 'Continue' : 'Place Order'}
+                </button>
+              </div>
+            </div>
+
+            {/* Summary */}
+            <div>
+              <div style={{ border: '1px solid var(--border)', padding: '28px', position: 'sticky', top: 90, background: '#f2ede4' }}>
+                <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 8, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 20 }}>Order Summary</div>
+                {cart.map(item => (
+                  <div key={item.id + item.size} style={{ display: 'flex', gap: 12, marginBottom: 14, paddingBottom: 14, borderBottom: '1px solid var(--border2)' }}>
+                    <div style={{ width: 60, height: 60, overflow: 'hidden', flexShrink: 0, background: '#ede7db' }}>
+                      <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }} onError={e => e.currentTarget.style.display = 'none'} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div className="disp" style={{ fontSize: 14, color: 'var(--bone)', marginBottom: 2 }}>{item.name}</div>
+                      <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, color: 'var(--stone)' }}>Size {item.size} · Qty {item.qty}</div>
+                    </div>
+                    <div className="disp" style={{ fontSize: 14, color: 'var(--gold)', whiteSpace: 'nowrap' }}>SAR {(item.price * item.qty).toLocaleString()}</div>
+                  </div>
+                ))}
+                <div className="hr" style={{ margin: '8px 0 16px' }} />
+                {[['Subtotal', `SAR ${total.toLocaleString()}`], ['Delivery', 'Complimentary'], ['Duties', 'Included']].map(([k, v]) => (
+                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                    <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, color: 'var(--stone)' }}>{k}</span>
+                    <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, color: 'var(--bone2)' }}>{v}</span>
+                  </div>
+                ))}
+                <div className="hr" style={{ margin: '12px 0' }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--bone)' }}>Total</span>
+                  <span className="disp" style={{ fontSize: 22, color: 'var(--gold)' }}>SAR {total.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <style>{`@media (min-width: 900px) { .co-grid { grid-template-columns: 1fr 380px !important; gap: 40px; } }`}</style>
+        </div>
+      );
+    }
+
+    /* ══════════════════════════════════════════
+       STORY
+    ══════════════════════════════════════════ */
+    function StoryPage() {
+      const chapters = [
+        { year: '1962', title: 'A Workshop in Al-Dirah', body: 'In the ancient souks of Doha\'s Al-Dirah quarter, master cobbler Khalid Al-Rashidi opened a workshop with nothing but a single last, a curved needle, and an uncompromising vision. Every pair he produced bore the weight of his name — each stitch a contract between craftsman and wearer.', image: 'https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=900&q=85&auto=format&fit=crop', num: '001' },
+        { year: '1978', title: 'The Camel Leather Discovery', body: 'A chance encounter with Bedouin leather traders from the Najd plateau introduced Khalid to full-grain camel hide — a material of extraordinary durability, warmth, and a grain unlike anything from European tanneries. The leather breathes in desert heat and softens with wear into a second skin.', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=900&q=85&auto=format&fit=crop', num: '002' },
+        { year: '1995', title: 'Royal Patronage', body: 'By royal appointment, Elite began crafting bespoke footwear for members of the Saudi royal household. Each commission took 60–90 days — a testament to the refusal to compromise quality for speed. Word spread quietly, as it does among those who know.', image: 'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=900&q=85&auto=format&fit=crop', num: '003' },
+        { year: 'Today', title: 'Twelve Hands, One Pair', body: 'Today, every pair passes through twelve specialists — from the leather cutter who has worked here for 30 years, to the finisher who hand-burnishes each edge with beeswax and carnauba. We limit production to 400 pairs per year. Not because we must, but because excellence demands it.', image: 'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=900&q=85&auto=format&fit=crop', num: '004' },
+      ];
+      return (
+        <div style={{ paddingTop: 70, minHeight: '100vh' }}>
+          {/* Hero */}
+          <div style={{ position: 'relative', height: '60vh', minHeight: 400, overflow: 'hidden', display: 'flex', alignItems: 'center', background: '#f2ede4' }}>
+            <img src="https://images.unsplash.com/photo-1542291026-7b4d3fef59c8?w=1400&q=85&auto=format&fit=crop" alt="Atelier" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.25 }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(6,5,4,0.9) 0%, rgba(6,5,4,0.3) 100%)' }} />
+            <div style={{ position: 'relative', zIndex: 1, padding: '0 60px', maxWidth: 700 }} className="anim-fade-up">
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.35em', color: 'var(--gold)', textTransform: 'uppercase', marginBottom: 16 }}>Est. 1962 · Doha, Qatar</div>
+              <h1 className="disp" style={{ fontSize: 'clamp(40px,7vw,80px)', fontWeight: 300, color: 'var(--bone)', lineHeight: 0.95, marginBottom: 16 }}>
+                The Craft of<br /><em style={{ color: 'var(--gold)' }}>Silence &amp; Precision</em>
+              </h1>
+              <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 12, color: 'var(--bone2)', lineHeight: 1.8, maxWidth: 420 }}>Six decades of Arabic leather artisanship. Twelve master craftsmen. One unbroken promise.</p>
+            </div>
+            <div className="big-num" style={{ position: 'absolute', right: 40, bottom: -20, fontSize: 'clamp(100px,20vw,260px)' }}>1962</div>
+          </div>
+
+          {/* Chapters */}
+          <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 0 80px' }}>
+            {chapters.map((ch, i) => {
+              const flip = i % 2 === 1;
+              return (
+                <div key={ch.year} style={{ display: 'grid', borderBottom: '1px solid var(--border2)', padding: '0' }} className="story-row">
+                  <div style={{ position: 'relative', overflow: 'hidden', minHeight: 320, order: flip ? 2 : 1 }}>
+                    <img src={ch.image} alt={ch.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0, opacity: 0.85 }} />
+                    <div style={{ position: 'absolute', bottom: 20, left: 20 }}>
+                      <span className="big-num" style={{ fontSize: 64, opacity: 0.2 }}>{ch.num}</span>
+                    </div>
+                  </div>
+                  <div style={{ padding: '48px 60px', display: 'flex', flexDirection: 'column', justifyContent: 'center', order: flip ? 1 : 2 }}>
+                    <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.3em', color: 'var(--gold)', textTransform: 'uppercase', marginBottom: 14 }}>{ch.year}</div>
+                    <h2 className="disp" style={{ fontSize: 'clamp(24px,3.5vw,40px)', fontWeight: 300, color: 'var(--bone)', lineHeight: 1.1, marginBottom: 18 }}>{ch.title}</h2>
+                    <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 12, lineHeight: 1.95, color: 'var(--bone2)', maxWidth: 440 }}>{ch.body}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Pull quote */}
+          <div style={{ padding: '64px 60px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', textAlign: 'center', background: '#f2ede4' }}>
+            <p className="disp" style={{ fontSize: 'clamp(20px,3.5vw,38px)', fontWeight: 300, fontStyle: 'italic', color: 'var(--bone)', lineHeight: 1.4, maxWidth: 700, margin: '0 auto 20px' }}>
+              "A shoe is not a product.<br /><span style={{ color: 'var(--gold)' }}>It is the autobiography of a craftsman."</span>
+            </p>
+            <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.22em', color: 'var(--stone)', textTransform: 'uppercase' }}>— Khalid Al-Rashidi, Founder</p>
+          </div>
+
+          <style>{`@media (min-width: 768px) { .story-row { grid-template-columns: 1fr 1fr !important; } }`}</style>
+        </div>
+      );
+    }
+
+    /* ══════════════════════════════════════════
+       CONTACT
+    ══════════════════════════════════════════ */
+    function ContactPage() {
+      const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
+      const [done, setDone] = useState(false);
+      const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+      if (done) return (
+        <div style={{ paddingTop: 80, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 24px' }}>
+          <div style={{ textAlign: 'center', maxWidth: 420 }} className="anim-fade-up">
+            <div className="disp" style={{ fontSize: 18, color: 'var(--gold)', fontStyle: 'italic', marginBottom: 20 }}>Message Received</div>
+            <h2 className="disp" style={{ fontSize: 42, fontWeight: 300, color: 'var(--bone)', marginBottom: 14 }}>A Client Advisor<br />Will Be in Touch</h2>
+            <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 12, color: 'var(--stone)', lineHeight: 1.9 }}>We respond within 2 business hours. For urgent matters, call our atelier directly.</p>
+            <div style={{ marginTop: 28, padding: '18px', border: '1px solid var(--border)', display: 'inline-block' }}>
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.15em', color: 'var(--stone)', textTransform: 'uppercase', marginBottom: 4 }}>Direct Line</div>
+              <div className="disp" style={{ fontSize: 20, color: 'var(--gold)' }}>+966 11 XXX XXXX</div>
+            </div>
+          </div>
+        </div>
+      );
+      return (
+        <div style={{ paddingTop: 80, minHeight: '100vh' }}>
+          <div style={{ padding: '48px 60px 0', maxWidth: 600, margin: '0 auto', textAlign: 'center' }} className="anim-fade-up">
+            <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.35em', color: 'var(--gold)', textTransform: 'uppercase', marginBottom: 14 }}>Personal Service</div>
+            <h1 className="disp" style={{ fontSize: 'clamp(36px,6vw,64px)', fontWeight: 300, color: 'var(--bone)', lineHeight: 1, marginBottom: 14 }}>
+              Speak with a<br /><em style={{ color: 'var(--gold)' }}>Client Advisor</em>
+            </h1>
+            <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 12, color: 'var(--stone)', lineHeight: 1.9, marginBottom: 40 }}>Every inquiry is handled personally. Whether bespoke commission, sizing counsel, or a question about our craft — we are at your service.</p>
+          </div>
+
+          <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 60px 80px', display: 'grid', gap: 40 }} className="ct-grid">
+            {/* Form */}
+            <div style={{ border: '1px solid var(--border)', padding: '36px', background: '#f2ede4' }}>
+              <form onSubmit={e => { e.preventDefault(); setDone(true); }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+                  {[['Full Name', 'name', 1], ['Email', 'email', 1], ['Phone', 'phone', 1]].map(([l, k, cs]) => (
+                    <div key={k} className="fi-wrap" style={{ gridColumn: `span ${cs}` }}><input className="fi" value={form[k]} onChange={e => set(k, e.target.value)} placeholder=" " /><label className="fl">{l}</label></div>
+                  ))}
+                  <div className="fi-wrap">
+                    <select className="fi" value={form.subject} onChange={e => set('subject', e.target.value)} style={{ paddingTop: 20, cursor: 'none' }}>
+                      <option value=""> </option>
+                      {['Bespoke Commission', 'Product Inquiry', 'Sizing Assistance', 'Order Support', 'Press & Partnerships'].map(o => <option key={o}>{o}</option>)}
+                    </select>
+                    <label className="fl" style={form.subject ? { top: 5, fontSize: 8, color: 'var(--gold)' } : {}}>Subject</label>
+                  </div>
+                </div>
+                <div className="fi-wrap" style={{ marginBottom: 24 }}>
+                  <textarea className="fi" value={form.message} onChange={e => set('message', e.target.value)} placeholder=" " rows={5} style={{ resize: 'vertical', minHeight: 120 }} />
+                  <label className="fl">Your Message</label>
+                </div>
+                <button type="submit" className="btn-solid" style={{ width: '100%', padding: '16px', fontSize: 10, letterSpacing: '0.22em' }}>Send Message</button>
+              </form>
+            </div>
+
+            {/* Info */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {[
+                { icon: '◈', t: 'Doha Atelier', lines: ['Al-Dirah Quarter, Doha', 'Kingdom of Qatar', 'Open Sun–Thu, 9am–6pm'] },
+                { icon: '◇', t: 'Private Appointments', lines: ['Bespoke consultations by appointment', 'In-atelier or at your residence', 'Available 7 days a week'] },
+                { icon: '✦', t: 'Client Services', lines: ['+966 11 XXX XXXX', 'advisors@elitecollection.sa', 'Response within 2 hours'] },
+              ].map(b => (
+                <div key={b.t} style={{ padding: '24px', border: '1px solid var(--border2)', transition: 'border-color 0.3s' }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border2)'}
+                >
+                  <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                    <span style={{ color: 'var(--gold)', fontSize: 14, marginTop: 2, flexShrink: 0 }}>{b.icon}</span>
+                    <div>
+                      <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 10 }}>{b.t}</div>
+                      {b.lines.map(l => <div key={l} style={{ fontFamily: 'var(--ff-ui)', fontSize: 12, color: 'var(--bone2)', lineHeight: 1.8 }}>{l}</div>)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div style={{ padding: '22px', background: 'linear-gradient(135deg, var(--ink3), var(--ink4))', border: '1px solid var(--border)' }}>
+                <p className="disp" style={{ fontSize: 15, fontStyle: 'italic', color: 'var(--bone)', lineHeight: 1.6, marginBottom: 8 }}>"No inquiry is too small. No request is unreasonable. You are our guest."</p>
+                <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 8, letterSpacing: '0.18em', color: 'var(--stone)', textTransform: 'uppercase' }}>The Elite Promise</p>
+              </div>
+            </div>
+          </div>
+
+          <style>{`@media (min-width: 900px) { .ct-grid { grid-template-columns: 1fr 360px !important; align-items: start; } }`}</style>
+        </div>
+      );
+    }
+
+    /* ══════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════ */
+    function Footer({ setPage }) {
+      const go = id => { setPage(id); window.scrollTo(0, 0); };
+      return (
+        <footer style={{ borderTop: '1px solid var(--border)', padding: '56px 60px 32px', background: '#f2ede4' }}>
+          <div style={{ maxWidth: 1400, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 40, marginBottom: 48 }}>
+            <div>
+              <div className="disp" style={{ fontSize: 20, letterSpacing: '0.12em', color: 'var(--gold)', marginBottom: 6 }}>ELITE</div>
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 8, letterSpacing: '0.3em', color: 'var(--stone)', textTransform: 'uppercase', marginBottom: 14 }}>Arabic Leather Atelier</div>
+              <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 11, color: 'var(--stone)', lineHeight: 1.8, maxWidth: 200 }}>Handcrafted in Doha since 1962. Limited to 400 pairs per year.</p>
+            </div>
+            {[
+              { t: 'Collection', ls: [['collection', 'All Pieces'], ['collection', 'New Arrivals'], ['collection', 'Signature'], ['collection', 'Limited Edition']] },
+              { t: 'Atelier', ls: [['story', 'Our Story'], ['story', 'Craftsmanship'], ['contact', 'Bespoke'], ['contact', 'Appointments']] },
+              { t: 'Client', ls: [['contact', 'Contact'], ['collection', 'Size Guide'], ['story', 'Care Guide'], ['collection', 'Returns']] },
+            ].map(col => (
+              <div key={col.t}>
+                <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 8, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 16 }}>{col.t}</div>
+                {col.ls.map(([pg, l]) => (
+                  <button key={l} onClick={() => go(pg)} style={{ display: 'block', background: 'none', border: 'none', cursor: 'none', fontFamily: 'var(--ff-ui)', fontSize: 11, color: 'var(--stone)', textAlign: 'left', padding: '4px 0', letterSpacing: '0.04em', transition: 'color 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'var(--bone2)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'var(--stone)'}
+                  >{l}</button>
+                ))}
+              </div>
+            ))}
+          </div>
+          <div className="hr" style={{ marginBottom: 24 }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+            <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, color: 'var(--stone)', letterSpacing: '0.06em' }}>© 2026 Elite Collection. All rights reserved.</p>
+            <p style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, color: 'var(--stone)', letterSpacing: '0.06em' }}>Doha · Dubai · Doha</p>
+          </div>
+        </footer>
+      );
+    }
+
+    /* ══════════════════════════════════════════
+       APP
+    ══════════════════════════════════════════ */
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{ "accentColor": "#c8924a", "bodyDark": true }/*EDITMODE-END*/;
+
+    function App() {
+      const [page, setPage] = useState('home');
+      const [cart, setCart] = useState([]);
+      const [cartOpen, setCartOpen] = useState(false);
+      const [product, setProduct] = useState(null);
+      const [tweakVis, setTweakVis] = useState(false);
+      const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
+
+      useEffect(() => {
+        try { const s = localStorage.getItem('elite2_cart'); if (s) setCart(JSON.parse(s)); } catch (e) { }
+      }, []);
+      useEffect(() => { localStorage.setItem('elite2_cart', JSON.stringify(cart)); }, [cart]);
+
+      useEffect(() => {
+        const h = e => {
+          if (e.data?.type === '__activate_edit_mode') setTweakVis(true);
+          if (e.data?.type === '__deactivate_edit_mode') setTweakVis(false);
+        };
+        window.addEventListener('message', h);
+        window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+        return () => window.removeEventListener('message', h);
+      }, []);
+
+      useEffect(() => {
+        document.documentElement.style.setProperty('--gold', tweaks.accentColor);
+      }, [tweaks.accentColor]);
+
+      const setTweak = (k, v) => setTweaks(t => { const n = { ...t, [k]: v }; window.parent.postMessage({ type: '__edit_mode_set_keys', edits: n }, '*'); return n; });
+
+      const addToCart = item => {
+        setCart(prev => {
+          const key = i => i.id === item.id && i.size === item.size;
+          const ex = prev.find(key);
+          if (ex) return prev.map(i => key(i) ? { ...i, qty: i.qty + item.qty } : i);
+          return [...prev, item];
+        });
+        setCartOpen(true);
+      };
+      const removeFromCart = (id, size) => setCart(prev => prev.filter(i => !(i.id === id && i.size === size)));
+      const cartCount = cart.reduce((s, i) => s + i.qty, 0);
+
+      return (
+        <>
+          <style>{`:root { --gold: ${tweaks.accentColor}; }`}</style>
+          <Nav page={page} setPage={setPage} cartCount={cartCount} onCart={() => setCartOpen(true)} />
+          <main>
+            {page === 'home' && <HomePage setPage={setPage} setProduct={setProduct} />}
+            {page === 'collection' && <CollectionPage setPage={setPage} setProduct={setProduct} />}
+            {page === 'product' && <ProductPage product={product} onAdd={addToCart} setPage={setPage} />}
+            {page === 'checkout' && <CheckoutPage cart={cart} setPage={setPage} />}
+            {page === 'story' && <StoryPage />}
+            {page === 'contact' && <ContactPage />}
+          </main>
+          {page !== 'checkout' && <Footer setPage={setPage} />}
+          {cartOpen && <CartDrawer cart={cart} onClose={() => setCartOpen(false)} onRemove={removeFromCart} setPage={setPage} />}
+
+          {/* Tweaks */}
+          {tweakVis && (
+            <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 300, width: 260, background: 'rgba(13,11,9,0.97)', backdropFilter: 'blur(24px)', border: '1px solid var(--border)', padding: '20px', boxShadow: '0 24px 64px rgba(0,0,0,0.7)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <span style={{ fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--gold)' }}>Tweaks</span>
+                <button onClick={() => { setTweakVis(false); window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); }} style={{ background: 'none', border: 'none', cursor: 'none', color: 'var(--stone)', fontSize: 14 }}>✕</button>
+              </div>
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 10 }}>Accent Color</div>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+                {['#c8924a', '#a06030', '#8fa08b', '#9090b8', '#b87060'].map(c => (
+                  <button key={c} onClick={() => setTweak('accentColor', c)} style={{ width: 28, height: 28, borderRadius: '50%', background: c, border: 'none', cursor: 'none', outline: tweaks.accentColor === c ? `2px solid ${c}` : '2px solid transparent', outlineOffset: 2, transition: 'outline 0.2s' }} />
+                ))}
+                <input type="color" value={tweaks.accentColor} onChange={e => setTweak('accentColor', e.target.value)} style={{ width: 28, height: 28, padding: 0, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', borderRadius: '50%' }} />
+              </div>
+              <div className="hr" style={{ marginBottom: 16 }} />
+              <div style={{ fontFamily: 'var(--ff-ui)', fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 10 }}>Jump to Page</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+                {[['home', 'Home'], ['collection', 'Collection'], ['product', 'Product'], ['checkout', 'Checkout'], ['story', 'Story'], ['contact', 'Contact']].map(([id, label]) => (
+                  <button key={id} onClick={() => { setPage(id); window.scrollTo(0, 0); }} style={{ padding: '7px', border: `1px solid ${page === id ? 'var(--gold)' : 'var(--border)'}`, background: page === id ? 'var(--gold3)' : 'transparent', color: page === id ? 'var(--gold)' : 'var(--stone)', fontFamily: 'var(--ff-ui)', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'none', transition: 'all 0.2s' }}>{label}</button>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+
+  <template id="__bundler_thumbnail">
+    <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+      <rect width="120" height="80" fill="#060504" />
+      <text x="12" y="48" fill="#c8924a" font-size="36" font-family="Georgia" font-style="italic"
+        opacity="0.15">001</text>
+      <text x="12" y="30" fill="#f0e8d8" font-size="18" font-family="Georgia" font-weight="300">ELITE</text>
+      <line x1="12" y1="36" x2="70" y2="36" stroke="#c8924a" stroke-width="0.5" opacity="0.4" />
+      <text x="12" y="58" fill="#6b5f50" font-size="7" font-family="sans-serif" letter-spacing="2">ARABIC LEATHER
+        ATELIER</text>
+    </svg>
+  </template>
+</body>
+
+</html>
